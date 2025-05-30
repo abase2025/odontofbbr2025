@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FBBR_IA - Assistente Virtual | Odonto_FBBR</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .chat-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background: linear-gradient(45deg, #4e54c8, #43cea2);
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .chat-header img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .chat-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .chat-header p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .chat-messages {
+            padding: 20px;
+            height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            background-color: #4e54c8;
+            color: #fff;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .message.bot {
+            align-self: flex-start;
+            background-color: #f0f0f0;
+            color: #333;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .message.bot a {
+            color: #4e54c8;
+            text-decoration: underline;
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-input input:focus {
+            border-color: #4e54c8;
+            box-shadow: 0 0 0 2px rgba(78, 84, 200, 0.2);
+        }
+        
+        .chat-input button {
+            background: linear-gradient(45deg, #4e54c8, #43cea2);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-input button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 10px rgba(78, 84, 200, 0.3);
+        }
+        
+        .chat-input button i {
+            font-size: 1.2rem;
+        }
+        
+        .search-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 0 15px;
+        }
+        
+        .search-option {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-option.active {
+            background: linear-gradient(45deg, #4e54c8, #43cea2);
+            color: #fff;
+        }
+        
+        .search-option:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .search-option.active:hover {
+            background: linear-gradient(45deg, #4e54c8, #43cea2);
+        }
+        
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 15px;
+            background-color: #f0f0f0;
+            border-radius: 18px;
+            width: fit-content;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .typing-indicator.active {
+            opacity: 1;
+        }
+        
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background-color: #888;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1s infinite ease-in-out;
+        }
+        
+        .typing-indicator span:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .return-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+        }
+        
+        @media (max-width: 768px) {
+            .chat-container {
+                margin: 20px;
+                height: calc(100vh - 40px);
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .chat-messages {
+                flex: 1;
+                height: auto;
+            }
+            
+            .return-button {
+                position: static;
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo_odonto_fbbr.jpg" alt="Odonto_FBBR Logo">
+                </a>
+            </div>
+            <nav>
+                <ul class="menu">
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="especialidades.html">Especialidades</a></li>
+                    <li><a href="resumos.html">Resumos</a></li>
+                    <li><a href="questoes.html">Questões</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+                <div class="mobile-menu-icon">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <a href="index.html" class="btn btn-primary return-button">
+            <i class="fas fa-arrow-left"></i> Voltar ao Início
+        </a>
+        
+        <section class="assistente-page">
+            <div class="container">
+                <h1>FBBR_IA - Seu Assistente Virtual</h1>
+                <p class="section-description">Tire suas dúvidas sobre odontologia com nosso assistente virtual. Ele pode pesquisar nos PDFs e na internet para encontrar as respostas que você precisa.</p>
+                
+                <div class="search-options">
+                    <div class="search-option active" data-source="all">
+                        <i class="fas fa-globe"></i> Todas as fontes
+                    </div>
+                    <div class="search-option" data-source="pdfs">
+                        <i class="fas fa-file-pdf"></i> Apenas PDFs
+                    </div>
+                    <div class="search-option" data-source="web">
+                        <i class="fas fa-search"></i> Apenas Internet
+                    </div>
+                </div>
+                
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <img src="images/assistente-virtual.jpg" alt="FBBR_IA">
+                        <div>
+                            <h2>FBBR_IA</h2>
+                            <p>Assistente Virtual de Odontologia</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message bot">
+                            Olá! Eu sou o FBBR_IA, seu assistente virtual de odontologia. Como posso ajudar você hoje?
+                            <div class="message-time">Agora</div>
+                        </div>
+                        
+                        <div class="typing-indicator" id="typing-indicator">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input">
+                        <input type="text" id="user-input" placeholder="Digite sua pergunta sobre odontologia...">
+                        <button id="send-button">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="images/logo_odonto_fbbr.jpg" alt="Odonto_FBBR Logo">
+                    <p>Plataforma Gratuita de Estudos em Odontologia</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="especialidades.html">Especialidades</a></li>
+                        <li><a href="resumos.html">Resumos</a></li>
+                        <li><a href="questoes.html">Questões</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-credits">
+                    <h3>Créditos</h3>
+                    <ul>
+                        <li>@Daniella Carvalho Gomes de Cerqueira</li>
+                        <li>Enfa.danicarvalho@me.com</li>
+                        <li>Coordenação dos cursos de saúde FBBR</li>
+                        <li>@coordenador: Felipe</li>
+                        <li>@Pro.Eric: fundamental pelas dicas e apoio</li>
+                        <li>@Harrison Costa, Desenvolvedor e Estudante da Instituição em Odonto</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Odonto_FBBR. Todos os direitos reservados.</p>
+                <a href="#" class="back-to-top">
+                    <i class="fas fa-arrow-up"></i> Voltar ao topo
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chat-messages');
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            const typingIndicator = document.getElementById('typing-indicator');
+            const searchOptions = document.querySelectorAll('.search-option');
+            
+            let currentSearchSource = 'all';
+            
+            // Alternar entre as opções de pesquisa
+            searchOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    searchOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSearchSource = this.getAttribute('data-source');
+                    
+                    // Adicionar mensagem informativa sobre a mudança
+                    const sourceMessage = {
+                        'all': 'Pesquisando em todas as fontes (PDFs e Internet)',
+                        'pdfs': 'Pesquisando apenas nos PDFs do site',
+                        'web': 'Pesquisando apenas na Internet'
+                    };
+                    
+                    addBotMessage(sourceMessage[currentSearchSource]);
+                });
+            });
+            
+            // Enviar mensagem quando o botão for clicado
+            sendButton.addEventListener('click', sendMessage);
+            
+            // Enviar mensagem quando Enter for pressionado
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Função para enviar mensagem
+            function sendMessage() {
+                const message = userInput.value.trim();
+                
+                if (message !== '') {
+                    // Adicionar mensagem do usuário
+                    addUserMessage(message);
+                    
+                    // Limpar input
+                    userInput.value = '';
+                    
+                    // Mostrar indicador de digitação
+                    typingIndicator.classList.add('active');
+                    
+                    // Simular resposta do bot após um tempo
+                    setTimeout(() => {
+                        typingIndicator.classList.remove('active');
+                        
+                        // Processar a mensagem e gerar resposta
+                        const botResponse = processUserQuery(message, currentSearchSource);
+                        addBotMessage(botResponse);
+                        
+                        // Rolar para a última mensagem
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 1500);
+                }
+            }
+            
+            // Adicionar mensagem do usuário ao chat
+            function addUserMessage(message) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', 'user');
+                
+                const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                messageElement.innerHTML = `
+                    ${message}
+                    <div class="message-time">${currentTime}</div>
+                `;
+                
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Adicionar mensagem do bot ao chat
+            function addBotMessage(message) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', 'bot');
+                
+                const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                messageElement.innerHTML = `
+                    ${message}
+                    <div class="message-time">${currentTime}</div>
+                `;
+                
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Processar a consulta do usuário e gerar resposta
+            function processUserQuery(query, source) {
+                // Respostas pré-definidas para demonstração
+                const commonResponses = {
+                    'oi': 'Olá! Como posso ajudar você com suas dúvidas de odontologia?',
+                    'olá': 'Olá! Estou aqui para ajudar com suas questões odontológicas.',
+                    'quem é você': 'Sou o FBBR_IA, um assistente virtual especializado em odontologia, criado para ajudar estudantes e profissionais a encontrar informações sobre o tema.',
+                    'ajuda': 'Posso ajudar você a encontrar informações sobre odontologia. Basta fazer perguntas específicas sobre temas como anatomia dental, cariologia, endodontia, etc.'
+                };
+                
+                // Verificar se há uma resposta pré-definida
+                const lowerQuery = query.toLowerCase();
+                for (const key in commonResponses) {
+                    if (lowerQuery.includes(key)) {
+                        return commonResponses[key];
+                    }
+                }
+                
+                // Respostas baseadas em temas odontológicos
+                if (lowerQuery.includes('cárie') || lowerQuery.includes('carie')) {
+                    return 'A cárie dentária é uma doença multifatorial que depende da interação de fatores como: hospedeiro susceptível, microbiota cariogênica, dieta rica em carboidratos fermentáveis e tempo. Você pode encontrar mais informações no PDF de Cariologia disponível no site.';
+                }
+                
+                if (lowerQuery.includes('endodontia') || lowerQuery.includes('canal')) {
+                    return 'A Endodontia é a especialidade que estuda a morfologia da cavidade pulpar, a fisiologia e patologia da polpa dentária, bem como a prevenção e tratamento das alterações pulpares e suas repercussões sobre os tecidos periapicais. Para mais detalhes, consulte o PDF de Endodontia.';
+                }
+                
+                if (lowerQuery.includes('periodontia') || lowerQuery.includes('gengiva')) {
+                    return 'A Periodontia é a especialidade que estuda e trata as doenças do sistema de implantação e suporte dos dentes. Consulte o PDF de Periodontia para informações detalhadas sobre classificações e tratamentos.';
+                }
+                
+                if (lowerQuery.includes('ortodontia') || lowerQuery.includes('aparelho')) {
+                    return 'A Ortodontia é a especialidade que tem como objetivo a prevenção, supervisão e orientação do desenvolvimento do aparelho mastigatório e a correção das estruturas dento-faciais. Veja mais no PDF de Ortodontia.';
+                }
+                
+                if (lowerQuery.includes('prótese') || lowerQuery.includes('protese')) {
+                    return 'A Prótese Dentária é a especialidade que tem como objetivo a reconstrução dos dentes parcialmente destruídos ou a reposição de dentes ausentes. Para mais informações, consulte o PDF de Prótese Parcial Removível.';
+                }
+                
+                // Resposta genérica baseada na fonte de pesquisa
+                switch(source) {
+                    case 'pdfs':
+                        return `Estou pesquisando sobre "${query}" nos PDFs disponíveis. Recomendo consultar diretamente os materiais na seção de Especialidades ou Resumos para informações mais detalhadas sobre este tema.`;
+                    case 'web':
+                        return `Estou pesquisando sobre "${query}" na internet. Para informações mais precisas e atualizadas, recomendo consultar fontes confiáveis como artigos científicos, o site do Conselho Federal de Odontologia ou publicações acadêmicas recentes.`;
+                    default:
+                        return `Estou pesquisando sobre "${query}" em todas as fontes disponíveis. Para informações mais detalhadas, você pode consultar os PDFs no site ou perguntar sobre tópicos específicos como anatomia dental, cariologia, endodontia, periodontia, ortodontia, entre outros.`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
