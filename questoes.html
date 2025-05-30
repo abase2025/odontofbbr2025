@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odonto_FBBR_Responde | Odonto_FBBR</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para a página de questões */
+        .questoes-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .filtros-container {
+            background: linear-gradient(135deg, rgba(78, 84, 200, 0.1) 0%, rgba(67, 206, 162, 0.1) 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .filtros-titulo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .filtros-titulo i {
+            font-size: 24px;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .filtros-titulo h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .filtros-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .filtro-grupo {
+            margin-bottom: 15px;
+        }
+        
+        .filtro-grupo label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .filtro-grupo select,
+        .filtro-grupo input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(78, 84, 200, 0.2);
+            border-radius: 10px;
+            background-color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .filtro-grupo select:focus,
+        .filtro-grupo input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(78, 84, 200, 0.2);
+            outline: none;
+        }
+        
+        .filtro-botoes {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .filtro-botoes button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-filtrar {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .btn-limpar {
+            background: #f0f0f0;
+            color: #666;
+        }
+        
+        .btn-filtrar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(78, 84, 200, 0.3);
+        }
+        
+        .btn-limpar:hover {
+            background: #e0e0e0;
+        }
+        
+        /* Área de resposta */
+        .resposta-container {
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        
+        .resposta-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(78, 84, 200, 0.1);
+        }
+        
+        .resposta-header img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .resposta-header-info h3 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+        
+        .resposta-header-info p {
+            margin: 5px 0 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .pergunta-area {
+            margin-bottom: 30px;
+        }
+        
+        .pergunta-area textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(78, 84, 200, 0.2);
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s ease;
+        }
+        
+        .pergunta-area textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(78, 84, 200, 0.2);
+            outline: none;
+        }
+        
+        .pergunta-botao {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .btn-perguntar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 30px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-perguntar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(78, 84, 200, 0.3);
+        }
+        
+        .btn-perguntar i {
+            font-size: 1.2rem;
+        }
+        
+        /* Área de resposta */
+        .resposta-conteudo {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(78, 84, 200, 0.1);
+        }
+        
+        .resposta-titulo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .resposta-titulo i {
+            font-size: 24px;
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .resposta-titulo h3 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+        
+        .resposta-texto {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            position: relative;
+        }
+        
+        .resposta-texto::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid #f9f9f9;
+        }
+        
+        .resposta-texto p {
+            margin: 0 0 15px;
+            line-height: 1.6;
+        }
+        
+        .resposta-texto p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .resposta-referencias {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #ddd;
+        }
+        
+        .resposta-referencias h4 {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .resposta-referencias ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .resposta-referencias li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .resposta-referencias a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .resposta-referencias a:hover {
+            text-decoration: underline;
+        }
+        
+        .resposta-loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .resposta-loading i {
+            font-size: 2rem;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .resposta-vazia {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+        
+        .resposta-vazia i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+        
+        /* Questões recentes */
+        .questoes-recentes {
+            margin-top: 50px;
+        }
+        
+        .questoes-recentes h3 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-align: center;
+        }
+        
+        .questoes-lista {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .questao-card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .questao-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .questao-materia {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: rgba(78, 84, 200, 0.1);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .questao-titulo {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+        
+        .questao-preview {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .questao-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #999;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .filtros-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .filtro-botoes {
+                flex-direction: column;
+            }
+            
+            .resposta-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .resposta-header img {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .questoes-lista {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo_odonto_fbbr.jpg" alt="Odonto_FBBR Logo">
+                </a>
+            </div>
+            <nav>
+                <ul class="menu">
+                    <li><a href="index.html"><i class="fas fa-home"></i>Início</a></li>
+                    <li><a href="especialidades.html"><i class="fas fa-tooth"></i>Especialidades</a></li>
+                    <li><a href="resumos.html"><i class="fas fa-book"></i>Resumos</a></li>
+                    <li><a href="questoes.html" class="active"><i class="fas fa-question-circle"></i>Questões</a></li>
+                    <li><a href="contato.html"><i class="fas fa-envelope"></i>Contato</a></li>
+                </ul>
+                <div class="mobile-menu-icon">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <a href="index.html" class="btn btn-primary return-button">
+            <i class="fas fa-arrow-left"></i> Voltar ao Início
+        </a>
+        
+        <section class="questoes-page">
+            <div class="container" style="text-align: center;">
+                <h1 style="display: inline-block; position: relative; text-align: center;">Odonto_FBBR_Responde</h1>
+                <p class="section-description">Tire suas dúvidas sobre odontologia e receba respostas baseadas em materiais científicos e apostilas.</p>
+                
+                <div class="questoes-container">
+                    <!-- Filtros -->
+                    <div class="filtros-container">
+                        <div class="filtros-titulo">
+                            <i class="fas fa-filter"></i>
+                            <h3>Filtros de Busca</h3>
+                        </div>
+                        
+                        <div class="filtros-form">
+                            <div class="filtro-grupo">
+                                <label for="filtro-materia">Matéria</label>
+                                <select id="filtro-materia">
+                                    <option value="">Todas as matérias</option>
+                                    <option value="anatomia">Anatomia Dental</option>
+                                    <option value="cariologia">Cariologia</option>
+                                    <option value="dentistica">Dentística</option>
+                                    <option value="endodontia">Endodontia</option>
+                                    <option value="periodontia">Periodontia</option>
+                                    <option value="ortodontia">Ortodontia</option>
+                                    <option value="protese">Prótese Dentária</option>
+                                    <option value="materiais">Materiais Odontológicos</option>
+                                    <option value="farmacologia">Farmacologia</option>
+                                    <option value="oclusao">Oclusão</option>
+                                    <option value="instrumentais">Instrumentais</option>
+                                    <option value="isolamento">Isolamento</option>
+                                    <option value="odontolegal">Odontologia Legal</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filtro-grupo">
+                                <label for="filtro-tema">Tema</label>
+                                <select id="filtro-tema">
+                                    <option value="">Todos os temas</option>
+                                    <option value="diagnostico">Diagnóstico</option>
+                                    <option value="tratamento">Tratamento</option>
+                                    <option value="prevencao">Prevenção</option>
+                                    <option value="tecnicas">Técnicas</option>
+                                    <option value="materiais">Materiais</option>
+                                    <option value="instrumentos">Instrumentos</option>
+                                    <option value="patologias">Patologias</option>
+                                    <option value="procedimentos">Procedimentos</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filtro-grupo">
+                                <label for="filtro-busca">Palavra-chave</label>
+                                <input type="text" id="filtro-busca" placeholder="Digite uma palavra-chave">
+                            </div>
+                        </div>
+                        
+                        <div class="filtro-botoes">
+                            <button class="btn-filtrar" id="btn-filtrar">
+                                <i class="fas fa-search"></i> Filtrar Questões
+                            </button>
+                            <button class="btn-limpar" id="btn-limpar">
+                                <i class="fas fa-undo"></i> Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Área de resposta -->
+                    <div class="resposta-container">
+                        <div class="resposta-header">
+                            <img src="images/assistente-virtual.jpg" alt="FBBR_IA">
+                            <div class="resposta-header-info">
+                                <h3>FBBR_IA</h3>
+                                <p>Assistente Virtual de Odontologia</p>
+                            </div>
+                        </div>
+                        
+                        <div class="pergunta-area">
+                            <textarea id="pergunta-texto" placeholder="Digite sua dúvida sobre odontologia aqui..."></textarea>
+                        </div>
+                        
+                        <div class="pergunta-botao">
+                            <button class="btn-perguntar" id="btn-perguntar">
+                                <i class="fas fa-paper-plane"></i> Enviar Pergunta
+                            </button>
+                        </div>
+                        
+                        <div class="resposta-loading" id="resposta-loading">
+                            <i class="fas fa-spinner"></i>
+                            <p>Processando sua pergunta...</p>
+                        </div>
+                        
+                        <div class="resposta-conteudo" id="resposta-conteudo" style="display: none;">
+                            <div class="resposta-titulo">
+                                <i class="fas fa-comment-dots"></i>
+                                <h3>Resposta</h3>
+                            </div>
+                            
+                            <div class="resposta-texto" id="resposta-texto">
+                                <!-- Conteúdo da resposta será inserido aqui via JavaScript -->
+                            </div>
+                            
+                            <div class="resposta-referencias" id="resposta-referencias">
+                                <h4>Referências:</h4>
+                                <ul id="lista-referencias">
+                                    <!-- Referências serão inseridas aqui via JavaScript -->
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="resposta-vazia" id="resposta-vazia">
+                            <i class="fas fa-question-circle"></i>
+                            <p>Faça uma pergunta para receber uma resposta do FBBR_IA</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Questões recentes -->
+                    <div class="questoes-recentes">
+                        <h3>Questões Frequentes</h3>
+                        
+                        <div class="questoes-lista">
+                            <div class="questao-card" data-pergunta="Quais são os tipos de isolamento absoluto utilizados em endodontia?">
+                                <span class="questao-materia">Endodontia</span>
+                                <h4 class="questao-titulo">Isolamento Absoluto em Endodontia</h4>
+                                <p class="questao-preview">Quais são os tipos de isolamento absoluto utilizados em procedimentos endodônticos e qual a importância de cada um?</p>
+                                <div class="questao-footer">
+                                    <span>Tema: Técnicas</span>
+                                </div>
+                            </div>
+                            
+                            <div class="questao-card" data-pergunta="Quais são as principais características da anatomia dos molares superiores?">
+                                <span class="questao-materia">Anatomia Dental</span>
+                                <h4 class="questao-titulo">Anatomia dos Molares Superiores</h4>
+                                <p class="questao-preview">Quais são as principais características anatômicas dos molares superiores e como identificá-los?</p>
+                                <div class="questao-footer">
+                                    <span>Tema: Diagnóstico</span>
+                                </div>
+                            </div>
+                            
+                            <div class="questao-card" data-pergunta="Quais são os materiais restauradores mais utilizados em dentística?">
+                                <span class="questao-materia">Materiais Odontológicos</span>
+                                <h4 class="questao-titulo">Materiais Restauradores em Dentística</h4>
+                                <p class="questao-preview">Quais são os principais materiais restauradores utilizados em dentística e suas indicações clínicas?</p>
+                                <div class="questao-footer">
+                                    <span>Tema: Materiais</span>
+                                </div>
+                            </div>
+                            
+                            <div class="questao-card" data-pergunta="Como é feito o diagnóstico da doença periodontal?">
+                                <span class="questao-materia">Periodontia</span>
+                                <h4 class="questao-titulo">Diagnóstico da Doença Periodontal</h4>
+                                <p class="questao-preview">Quais são os métodos e parâmetros utilizados para o diagnóstico da doença periodontal?</p>
+                                <div class="questao-footer">
+                                    <span>Tema: Diagnóstico</span>
+                                </div>
+                            </div>
+                            
+                            <div class="questao-card" data-pergunta="Quais são os principais antibióticos utilizados em odontologia?">
+                                <span class="questao-materia">Farmacologia</span>
+                                <h4 class="questao-titulo">Antibióticos em Odontologia</h4>
+                                <p class="questao-preview">Quais são os principais antibióticos utilizados na prática odontológica e suas indicações?</p>
+                                <div class="questao-footer">
+                                    <span>Tema: Tratamento</span>
+                                </div>
+                            </div>
+                            
+                            <div class="questao-card" data-pergunta="Como é feito o preparo para prótese parcial removível?">
+                                <span class="questao-materia">Prótese Dentária</span>
+                                <h4 class="questao-titulo">Preparo para PPR</h4>
+                                <p class="questao-preview">Quais são as etapas e considerações no preparo dental para prótese parcial removível?</p>
+                                <div class="questao-footer">
+                                    <span>Tema: Procedimentos</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="images/logo_odonto_fbbr.jpg" alt="Odonto_FBBR Logo">
+                    <p>Plataforma Gratuita de Estudos em Odontologia</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Links Rápidos</h3>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="especialidades.html">Especialidades</a></li>
+                        <li><a href="resumos.html">Resumos</a></li>
+                        <li><a href="questoes.html">Questões</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-credits">
+                    <h3>Créditos</h3>
+                    <ul>
+                        <li>@Daniella Carvalho Gomes de Cerqueira</li>
+                        <li>Enfa.danicarvalho@me.com</li>
+                        <li>Coordenação dos cursos de saúde FBBR</li>
+                        <li>@coordenador: Felipe</li>
+                        <li>@Pro.Eric: fundamental pelas dicas e apoio</li>
+                        <li>@Harrison Costa, Desenvolvedor e Estudante da Instituição em Odonto</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Odonto_FBBR. Todos os direitos reservados.</p>
+                <a href="#" class="back-to-top">
+                    <i class="fas fa-arrow-up"></i> Voltar ao topo
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnPerguntar = document.getElementById('btn-perguntar');
+            const perguntaTexto = document.getElementById('pergunta-texto');
+            const respostaLoading = document.getElementById('resposta-loading');
+            const respostaConteudo = document.getElementById('resposta-conteudo');
+            const respostaTexto = document.getElementById('resposta-texto');
+            const respostaVazia = document.getElementById('resposta-vazia');
+            const listaReferencias = document.getElementById('lista-referencias');
+            const questaoCards = document.querySelectorAll('.questao-card');
+            const btnFiltrar = document.getElementById('btn-filtrar');
+            const btnLimpar = document.getElementById('btn-limpar');
+            
+            // Função para processar a pergunta e gerar resposta
+            function processarPergunta(pergunta) {
+                // Esconder mensagem vazia
+                respostaVazia.style.display = 'none';
+                
+                // Mostrar loading
+                respostaLoading.style.display = 'block';
+                
+                // Simular tempo de processamento
+                setTimeout(() => {
+                    // Esconder loading
+                    respostaLoading.style.display = 'none';
+                    
+                    // Gerar resposta baseada na pergunta
+                    const resposta = gerarResposta(pergunta);
+                    
+                    // Preencher conteúdo da resposta
+                    respostaTexto.innerHTML = resposta.texto;
+                    
+                    // Limpar e preencher referências
+                    listaReferencias.innerHTML = '';
+                    resposta.referencias.forEach(ref => {
+                        const li = document.createElement('li');
+                        if (ref.url) {
+                            const a = document.createElement('a');
+                            a.href = ref.url;
+                            a.textContent = ref.texto;
+                            a.target = '_blank';
+                            li.appendChild(a);
+                        } else {
+                            li.textContent = ref.texto;
+                        }
+                        listaReferencias.appendChild(li);
+                    });
+                    
+                    // Mostrar conteúdo da resposta
+                    respostaConteudo.style.display = 'block';
+                    
+                    // Rolar para a resposta
+                    respostaConteudo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1500);
+            }
+            
+            // Função para gerar resposta baseada na pergunta
+            function gerarResposta(pergunta) {
+                pergunta = pergunta.toLowerCase();
+                
+                // Respostas baseadas em palavras-chave
+                if (pergunta.includes('isolamento') || pergunta.includes('absoluto') || pergunta.includes('dique')) {
+                    return {
+                        texto: `<p>O isolamento absoluto em endodontia é fundamental para garantir um campo operatório limpo, seco e livre de contaminação. Os principais tipos de isolamento absoluto utilizados em endodontia são:</p>
+                        <p><strong>1. Isolamento com dique de borracha:</strong> É o mais comum e consiste na utilização de uma lâmina de látex ou material similar, perfurada e fixada com grampos específicos nos dentes. Este tipo proporciona excelente visualização, controle de fluidos e proteção contra a deglutição de instrumentos.</p>
+                        <p><strong>2. Isolamento modificado:</strong> Utilizado em casos onde não é possível realizar o isolamento convencional, como em dentes muito destruídos. Pode envolver o uso de materiais complementares como cianoacrilato, cimentos temporários ou matrizes.</p>
+                        <p><strong>3. Isolamento com barreira gengival fotopolimerizável:</strong> Complementa o isolamento com dique em casos de dentes com coroas clínicas curtas ou com lesões subgengivais.</p>
+                        <p>A importância do isolamento absoluto em endodontia está relacionada à prevenção da contaminação bacteriana, proteção dos tecidos moles, melhoria da visibilidade do campo operatório e aumento da eficácia dos irrigantes utilizados durante o tratamento.</p>`,
+                        referencias: [
+                            { texto: 'PDF: isolamentos.pdf', url: 'pdfs/isolamentos.pdf' },
+                            { texto: 'PDF: Endodontia-Introduçãoeanatomiainternadosdentes.pdf', url: 'pdfs/Endodontia-Introduçãoeanatomiainternadosdentes.pdf' }
+                        ]
+                    };
+                } 
+                else if (pergunta.includes('molar') && (pergunta.includes('superior') || pergunta.includes('anatomia'))) {
+                    return {
+                        texto: `<p>Os molares superiores apresentam características anatômicas específicas que os diferenciam dos demais grupos dentários:</p>
+                        <p><strong>Características gerais:</strong></p>
+                        <ul>
+                            <li>Possuem três raízes bem definidas: mesiovestibular, distovestibular e palatina</li>
+                            <li>A coroa apresenta formato romboidal quando vista por oclusal</li>
+                            <li>Geralmente possuem quatro cúspides: mesiovestibular, distovestibular, mesiopalatina e distopalatina</li>
+                            <li>O primeiro molar superior frequentemente apresenta uma quinta cúspide (cúspide de Carabelli)</li>
+                        </ul>
+                        <p><strong>Primeiro molar superior:</strong></p>
+                        <ul>
+                            <li>É o maior dente da arcada superior em volume</li>
+                            <li>Possui 3-4 canais (dois na raiz mesiovestibular, um na distovestibular e um na palatina)</li>
+                            <li>A raiz palatina é a mais longa e robusta</li>
+                            <li>Apresenta sulco central em forma de "H"</li>
+                        </ul>
+                        <p><strong>Segundo molar superior:</strong></p>
+                        <ul>
+                            <li>Semelhante ao primeiro molar, porém com dimensões menores</li>
+                            <li>Raízes mais próximas e às vezes fusionadas</li>
+                            <li>Geralmente possui 3 canais</li>
+                            <li>Raramente apresenta a cúspide de Carabelli</li>
+                        </ul>
+                        <p><strong>Terceiro molar superior:</strong></p>
+                        <ul>
+                            <li>Anatomia bastante variável</li>
+                            <li>Frequentemente apresenta fusão radicular</li>
+                            <li>Coroa mais irregular e menor que os outros molares</li>
+                        </ul>`,
+                        referencias: [
+                            { texto: 'PDF: ANATOMIADENTAL-Molares.pdf', url: 'pdfs/ANATOMIADENTAL-Molares.pdf' },
+                            { texto: 'PDF: ANATOMIADENTAL-ResumoCompleto.pdf', url: 'pdfs/ANATOMIADENTAL-ResumoCompleto.pdf' }
+                        ]
+                    };
+                }
+                else if (pergunta.includes('material') && pergunta.includes('restaurador')) {
+                    return {
+                        texto: `<p>Os principais materiais restauradores utilizados em dentística e suas indicações clínicas são:</p>
+                        <p><strong>1. Resinas Compostas:</strong></p>
+                        <ul>
+                            <li><strong>Indicações:</strong> Restaurações diretas em dentes anteriores e posteriores, facetas diretas, reconstrução de ângulos fraturados, fechamento de diastemas.</li>
+                            <li><strong>Vantagens:</strong> Estética excelente, conservação de estrutura dental, adesão ao esmalte e dentina.</li>
+                            <li><strong>Limitações:</strong> Contração de polimerização, técnica sensível, possibilidade de infiltração marginal.</li>
+                        </ul>
+                        <p><strong>2. Amálgama:</strong></p>
+                        <ul>
+                            <li><strong>Indicações:</strong> Restaurações em dentes posteriores, especialmente em áreas de difícil controle de umidade ou grande estresse oclusal.</li>
+                            <li><strong>Vantagens:</strong> Durabilidade, resistência ao desgaste, facilidade de manipulação, baixo custo.</li>
+                            <li><strong>Limitações:</strong> Estética desfavorável, não adesivo (requer preparo retentivo), controvérsias sobre mercúrio.</li>
+                        </ul>
+                        <p><strong>3. Cimentos de Ionômero de Vidro:</strong></p>
+                        <ul>
+                            <li><strong>Indicações:</strong> Restaurações cervicais, ART (Tratamento Restaurador Atraumático), forramento, cimentação, restaurações em dentes decíduos.</li>
+                            <li><strong>Vantagens:</strong> Liberação de flúor, adesão química à estrutura dental, biocompatibilidade.</li>
+                            <li><strong>Limitações:</strong> Baixa resistência mecânica, estética limitada, sensibilidade à umidade durante a presa.</li>
+                        </ul>
+                        <p><strong>4. Cerâmicas Odontológicas:</strong></p>
+                        <ul>
+                            <li><strong>Indicações:</strong> Restaurações indiretas como inlays, onlays, coroas, facetas.</li>
+                            <li><strong>Vantagens:</strong> Excelente estética, biocompatibilidade, resistência ao desgaste, estabilidade de cor.</li>
+                            <li><strong>Limitações:</strong> Custo elevado, necessidade de múltiplas sessões, fragilidade relativa.</li>
+                        </ul>
+                        <p><strong>5. Resinas Bulk Fill:</strong></p>
+                        <ul>
+                            <li><strong>Indicações:</strong> Restaurações posteriores, especialmente cavidades profundas.</li>
+                            <li><strong>Vantagens:</strong> Inserção em incrementos de até 5mm, menor contração, redução do tempo clínico.</li>
+                            <li><strong>Limitações:</strong> Estética inferior às resinas convencionais em alguns casos.</li>
+                        </ul>`,
+                        referencias: [
+                            { texto: 'PDF: MATERIAISODONTOLOGICOS-MATERIAISRESTAURADORES.pdf', url: 'pdfs/MATERIAISODONTOLOGICOS-MATERIAISRESTAURADORES.pdf' },
+                            { texto: 'PDF: Dentisticacompleto.pdf', url: 'pdfs/Dentisticacompleto.pdf' }
+                        ]
+                    };
+                }
+                else if (pergunta.includes('doença periodontal') || pergunta.includes('periodontia') && pergunta.includes('diagnóstico')) {
+                    return {
+                        texto: `<p>O diagnóstico da doença periodontal é realizado através de uma combinação de avaliações clínicas e radiográficas:</p>
+                        <p><strong>Avaliação Clínica:</strong></p>
+                        <ul>
+                            <li><strong>Profundidade de Sondagem (PS):</strong> Medida da distância da margem gengival até o fundo do sulco/bolsa periodontal. Valores acima de 3mm são considerados indicativos de bolsa periodontal.</li>
+                            <li><strong>Nível de Inserção Clínica (NIC):</strong> Medida da distância da junção cemento-esmalte até o fundo do sulco/bolsa. Determina a perda de inserção periodontal.</li>
+                            <li><strong>Sangramento à Sondagem (SS):</strong> Indicador de inflamação ativa do periodonto.</li>
+                            <li><strong>Mobilidade Dental:</strong> Classificada em graus (I, II e III), indica perda de suporte periodontal.</li>
+                            <li><strong>Envolvimento de Furca:</strong> Classificado em graus (I, II e III), indica progressão da doença em dentes multirradiculares.</li>
+                            <li><strong>Recessão Gengival:</strong> Migração apical da margem gengival, expondo a superfície radicular.</li>
+                            <li><strong>Índice de Placa:</strong> Avalia a presença de biofilme dental, principal fator etiológico.</li>
+                        </ul>
+                        <p><strong>Avaliação Radiográfica:</strong></p>
+                        <ul>
+                            <li><strong>Radiografias Periapicais:</strong> Permitem visualizar perda óssea, cálculos subgengivais, anatomia radicular.</li>
+                            <li><strong>Radiografia Panorâmica:</strong> Fornece visão geral do estado periodontal.</li>
+                            <li><strong>Tomografia Computadorizada:</strong> Em casos específicos, para avaliação tridimensional do defeito ósseo.</li>
+                        </ul>
+                        <p><strong>Classificação atual (2018):</strong></p>
+                        <p>A nova classificação das doenças periodontais considera:</p>
+                        <ul>
+                            <li>Estágios (I a IV): baseados na severidade, complexidade e extensão/distribuição</li>
+                            <li>Graus (A, B, C): baseados na taxa de progressão, fatores de risco e interação com saúde sistêmica</li>
+                        </ul>
+                        <p>O diagnóstico preciso é fundamental para estabelecer o plano de tratamento adequado e o prognóstico da doença periodontal.</p>`,
+                        referencias: [
+                            { texto: 'PDF: Periodontia-CompletoNovaClassificação.pdf', url: 'pdfs/Periodontia-CompletoNovaClassificação.pdf' }
+                        ]
+                    };
+                }
+                else if (pergunta.includes('antibiótico') || pergunta.includes('farmacologia')) {
+                    return {
+                        texto: `<p>Os principais antibióticos utilizados na prática odontológica e suas indicações são:</p>
+                        <p><strong>1. Penicilinas:</strong></p>
+                        <ul>
+                            <li><strong>Amoxicilina:</strong> Antibiótico de primeira escolha para infecções odontogênicas. Dose usual: 500mg, 3x/dia, por 7 dias.</li>
+                            <li><strong>Amoxicilina + Ácido Clavulânico:</strong> Indicado quando há suspeita de bactérias produtoras de beta-lactamase. Dose usual: 500mg + 125mg, 3x/dia, por 7 dias.</li>
+                            <li><strong>Indicações:</strong> Abscessos dentoalveolares, periodontite agressiva, infecções pós-cirúrgicas, profilaxia para endocardite bacteriana.</li>
+                        </ul>
+                        <p><strong>2. Macrolídeos:</strong></p>
+                        <ul>
+                            <li><strong>Azitromicina:</strong> Alternativa para pacientes alérgicos à penicilina. Dose usual: 500mg, 1x/dia, por 3 dias.</li>
+                            <li><strong>Claritromicina:</strong> Alternativa para pacientes alérgicos à penicilina. Dose usual: 500mg, 2x/dia, por 7 dias.</li>
+                            <li><strong>Indicações:</strong> Pacientes alérgicos à penicilina, infecções por anaeróbios.</li>
+                        </ul>
+                        <p><strong>3. Lincosamidas:</strong></p>
+                        <ul>
+                            <li><strong>Clindamicina:</strong> Excelente penetração óssea, indicada para infecções graves em pacientes alérgicos à penicilina. Dose usual: 300mg, 4x/dia, por 7 dias.</li>
+                            <li><strong>Indicações:</strong> Infecções graves, osteomielite, pacientes alérgicos à penicilina.</li>
+                        </ul>
+                        <p><strong>4. Metronidazol:</strong></p>
+                        <ul>
+                            <li>Eficaz contra anaeróbios estritos, frequentemente associado à amoxicilina. Dose usual: 400mg, 3x/dia, por 7 dias.</li>
+                            <li><strong>Indicações:</strong> Gengivite ulcerativa necrosante (GUN), periodontite agressiva, infecções mistas.</li>
+                        </ul>
+                        <p><strong>5. Tetraciclinas:</strong></p>
+                        <ul>
+                            <li><strong>Doxiciclina:</strong> Além do efeito antimicrobiano, possui propriedades anti-colagenase. Dose usual: 100mg, 2x/dia no primeiro dia, seguido de 100mg, 1x/dia.</li>
+                            <li><strong>Indicações:</strong> Periodontite agressiva, doenças periodontais refratárias.</li>
+                        </ul>
+                        <p><strong>Considerações importantes:</strong></p>
+                        <ul>
+                            <li>A prescrição de antibióticos deve ser criteriosa, considerando o diagnóstico preciso e a necessidade real.</li>
+                            <li>O tratamento local (drenagem, remoção da causa) é prioritário e muitas vezes suficiente.</li>
+                            <li>A escolha do antibiótico deve considerar o espectro de ação, histórico de alergias e condições sistêmicas do paciente.</li>
+                        </ul>`,
+                        referencias: [
+                            { texto: 'PDF: farmaco.pdf', url: 'pdfs/farmaco.pdf' }
+                        ]
+                    };
+                }
+                else if (pergunta.includes('prótese') && (pergunta.includes('parcial') || pergunta.includes('removível') || pergunta.includes('ppr'))) {
+                    return {
+                        texto: `<p>O preparo para prótese parcial removível (PPR) envolve uma série de etapas e considerações para garantir o sucesso do tratamento:</p>
+                        <p><strong>Etapas do preparo dental para PPR:</strong></p>
+                        <ol>
+                            <li><strong>Avaliação inicial e planejamento:</strong>
+                                <ul>
+                                    <li>Análise dos modelos de estudo</li>
+                                    <li>Delineamento para determinar o eixo de inserção</li>
+                                    <li>Identificação das áreas retentivas e não retentivas</li>
+                                    <li>Planejamento dos apoios oclusais e dos grampos</li>
+                                </ul>
+                            </li>
+                            <li><strong>Preparos de nichos:</strong>
+                                <ul>
+                                    <li>Confecção de nichos oclusais, linguais ou incisais para acomodar os apoios</li>
+                                    <li>Forma de colher, com profundidade de 1,5mm a 2mm</li>
+                                    <li>Paredes convergentes para oclusal</li>
+                                    <li>Ângulos internos arredondados</li>
+                                </ul>
+                            </li>
+                            <li><strong>Planos-guia:</strong>
+                                <ul>
+                                    <li>Superfícies verticais paralelas ao eixo de inserção</li>
+                                    <li>Preparados nas faces proximais dos dentes pilares</li>
+                                    <li>Garantem estabilidade e direcionam a inserção e remoção da PPR</li>
+                                </ul>
+                            </li>
+                            <li><strong>Áreas retentivas:</strong>
+                                <ul>
+                                    <li>Identificação e/ou criação de áreas retentivas para os braços de retenção dos grampos</li>
+                                    <li>Geralmente localizadas no terço cervical da coroa clínica</li>
+                                </ul>
+                            </li>
+                            <li><strong>Contorno dos dentes pilares:</strong>
+                                <ul>
+                                    <li>Modificação do contorno para acomodar os componentes da PPR</li>
+                                    <li>Eliminação de interferências</li>
+                                </ul>
+                            </li>
+                        </ol>
+                        <p><strong>Considerações importantes:</strong></p>
+                        <ul>
+                            <li><strong>Princípio de preservação:</strong> Os preparos devem ser conservadores, removendo apenas o necessário da estrutura dental.</li>
+                            <li><strong>Distribuição de forças:</strong> O planejamento deve visar a distribuição adequada das forças mastigatórias entre dentes pilares e rebordo residual.</li>
+                            <li><strong>Saúde periodontal:</strong> Os dentes pilares devem apresentar boa saúde periodontal e adequada proporção coroa-raiz.</li>
+                            <li><strong>Restaurações prévias:</strong> Dentes com necessidade de restaurações devem ser tratados antes da confecção da PPR.</li>
+                            <li><strong>Estética:</strong> Os componentes metálicos devem ser planejados para minimizar sua visibilidade.</li>
+                        </ul>`,
+                        referencias: [
+                            { texto: 'PDF: PÓTESEPARCIALREMOVIVEL.pdf', url: 'pdfs/PÓTESEPARCIALREMOVIVEL.pdf' }
+                        ]
+                    };
+                }
+                else {
+                    return {
+                        texto: `<p>Sua pergunta é muito interessante! Para fornecer uma resposta mais precisa e baseada em evidências científicas, recomendo consultar os materiais disponíveis em nossa plataforma.</p>
+                        <p>Você pode encontrar informações detalhadas sobre este tema nos PDFs das apostilas disponíveis na seção de Resumos ou Especialidades do site.</p>
+                        <p>Alternativamente, você pode reformular sua pergunta com mais detalhes ou escolher um tópico específico relacionado à odontologia, como anatomia dental, cariologia, endodontia, periodontia, ortodontia, prótese dentária, materiais odontológicos, farmacologia, entre outros.</p>`,
+                        referencias: [
+                            { texto: 'Seção de Resumos', url: 'resumos.html' },
+                            { texto: 'Seção de Especialidades', url: 'especialidades.html' }
+                        ]
+                    };
+                }
+            }
+            
+            // Evento de clique no botão de perguntar
+            btnPerguntar.addEventListener('click', function() {
+                const pergunta = perguntaTexto.value.trim();
+                if (pergunta !== '') {
+                    processarPergunta(pergunta);
+                }
+            });
+            
+            // Evento de tecla Enter no campo de pergunta
+            perguntaTexto.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const pergunta = perguntaTexto.value.trim();
+                    if (pergunta !== '') {
+                        processarPergunta(pergunta);
+                    }
+                }
+            });
+            
+            // Evento de clique nos cards de questões frequentes
+            questaoCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const pergunta = this.getAttribute('data-pergunta');
+                    perguntaTexto.value = pergunta;
+                    processarPergunta(pergunta);
+                });
+            });
+            
+            // Evento de clique no botão de filtrar
+            btnFiltrar.addEventListener('click', function() {
+                const materia = document.getElementById('filtro-materia').value;
+                const tema = document.getElementById('filtro-tema').value;
+                const busca = document.getElementById('filtro-busca').value.toLowerCase();
+                
+                // Simulação de filtro (em um sistema real, isso seria feito com dados do backend)
+                alert(`Filtros aplicados:\nMatéria: ${materia || 'Todas'}\nTema: ${tema || 'Todos'}\nBusca: ${busca || 'Nenhuma'}`);
+            });
+            
+            // Evento de clique no botão de limpar filtros
+            btnLimpar.addEventListener('click', function() {
+                document.getElementById('filtro-materia').value = '';
+                document.getElementById('filtro-tema').value = '';
+                document.getElementById('filtro-busca').value = '';
+            });
+        });
+    </script>
+</body>
+</html>
